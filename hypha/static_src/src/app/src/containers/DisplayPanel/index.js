@@ -11,7 +11,8 @@ import {
     getReviewButtonStatus,
     getCurrentReview,
     getDeterminationButtonStatus,
-    getCurrentDetermination
+    getCurrentDetermination,
+    getScreeningStatuses
 } from '@selectors/submissions'
 import { getDraftNoteForSubmission } from '@selectors/notes';
 
@@ -35,11 +36,19 @@ import './style.scss'
 
 
 const DisplayPanel = props => {
-    const { submissionID, submission, addMessage, showReviewForm, currentReview, showDeterminationForm, currentDetermination} = props
+    const { submissionID, 
+            submission, 
+            addMessage, 
+            showReviewForm, 
+            currentReview, 
+            showDeterminationForm, 
+            currentDetermination, 
+            screeningStatuses 
+        } = props
     const [ currentStatus, setCurrentStatus ] = useState(undefined)
     const [ localSubmissionID, setLocalSubmissionID ] = useState(submissionID)
-    const UserFlagContainer = WithFlagType(FlagContainer, 'user', submissionID)
-    const StaffFlagContainer = WithFlagType(FlagContainer, 'staff', submissionID)
+    const UserFlagContainer =  submission && submission.flags && WithFlagType(FlagContainer, 'user', submission.flags.find(flag => flag.type == 'user'), submissionID)
+    const StaffFlagContainer = submission && submission.flags && WithFlagType(FlagContainer, 'staff',  submission.flags.find(flag => flag.type == 'staff'), submissionID)
 
     useEffect(() => {
         setCurrentStatus(undefined)
@@ -78,9 +87,18 @@ const DisplayPanel = props => {
             <Determination submissionID={submissionID} submission={submission}/> : null}
             {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
-            <ScreeningStatusContainer submissionID={submissionID} />
+            <ScreeningStatusContainer 
+                submissionID={submissionID} 
+                submissionScreening={submission ? submission.screening && submission.screening : []} 
+                allScreeningStatuses={screeningStatuses}
+            />
+            { submission && submission.flags ?
+            <>
             <UserFlagContainer />
             <StaffFlagContainer />
+            </>
+            : null
+            }
             <ReviewInformation submissionID={submissionID} />
             <SubmissionLink submissionID={submissionID} />
         </Tab>,
@@ -139,7 +157,8 @@ DisplayPanel.propTypes = {
     showReviewForm: PropTypes.bool,
     currentReview: PropTypes.number,
     currentDetermination: PropTypes.number,
-    showDeterminationForm: PropTypes.bool
+    showDeterminationForm: PropTypes.bool,
+    screeningStatuses: PropTypes.array
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -150,6 +169,7 @@ const mapStateToProps = (state, ownProps) => ({
     currentReview: getCurrentReview(state),
     currentDetermination: getCurrentDetermination(state),
     draftNote: getDraftNoteForSubmission(getCurrentSubmissionID(state))(state),
+    screeningStatuses: getScreeningStatuses(state),
 })
 
 const mapDispatchToProps = {

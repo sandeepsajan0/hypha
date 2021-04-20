@@ -19,15 +19,27 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 export class ScreeningStatusContainer extends React.PureComponent {
 
   componentDidMount(){
-    if(this.props.submissionID){
-      this.props.initializeAction(this.props.submissionID)
-    }
     document.addEventListener("keydown", this.keydownHandler);
   }
 
   componentDidUpdate(prevProps){
     if(this.props.submissionID != prevProps.submissionID){
-      this.props.initializeAction(this.props.submissionID)
+      this.props.showLoading()
+    }
+    if(this.props.allScreeningStatuses !== prevProps.allScreeningStatuses){
+      this.props.getScreeningSuccess(this.props.allScreeningStatuses) 
+      if(this.props.screeningInfo.defaultSelectedValue != null && this.props.screeningInfo.selectedValues != null){
+        this.props.hideLoading()
+      }
+    }
+    if(prevProps.submissionScreening !== this.props.submissionScreening 
+        && this.props.submissionScreening 
+        && this.props.submissionScreening.length !== 0){
+        this.props.setVisibleSelected(this.props.submissionScreening[0].selectedReasons)
+        this.props.setDefaultSelected(this.props.submissionScreening[1].selectedDefault)
+        if(this.props.screeningStatuses != null){
+          this.props.hideLoading()
+        }
     }
   }
 
@@ -124,7 +136,6 @@ export class ScreeningStatusContainer extends React.PureComponent {
 }
 
 ScreeningStatusContainer.propTypes = {
-  initializeAction: PropTypes.func,
   submission: PropTypes.object,
   selectDefautValue: PropTypes.func,
   defaultOptions: PropTypes.object,
@@ -132,7 +143,14 @@ ScreeningStatusContainer.propTypes = {
   visibleOptions: PropTypes.array,
   selectVisibleOption: PropTypes.func,
   submissionID : PropTypes.number,
-  screeningStatuses: PropTypes.array
+  screeningStatuses: PropTypes.array,
+  showLoading: PropTypes.func,
+  getScreeningSuccess: PropTypes.func,
+  setVisibleSelected: PropTypes.func,
+  setDefaultSelected: PropTypes.func,
+  hideLoading: PropTypes.func,
+  allScreeningStatuses: PropTypes.array,
+  submissionScreening: PropTypes.array
 }
 
 
@@ -147,9 +165,13 @@ const mapStateToProps = state =>  ({
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      initializeAction: Actions.initializeAction,
       selectDefautValue: Actions.selectDefaultValueAction,
-      selectVisibleOption: Actions.selectVisibleOptionAction
+      selectVisibleOption: Actions.selectVisibleOptionAction,
+      getScreeningSuccess: Actions.getScreeningSuccessAction,
+      setVisibleSelected: Actions.setVisibleSelectedAction,
+      setDefaultSelected: Actions.setDefaultSelectedAction,
+      hideLoading: Actions.hideLoadingAction,
+      showLoading: Actions.showLoadingAction
     },
     dispatch,
   );

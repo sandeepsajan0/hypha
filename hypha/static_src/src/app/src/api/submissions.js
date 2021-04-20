@@ -42,6 +42,12 @@ export function fetchDeterminationDraft(id) {
     };
 }
 
+export function fetchScreeningStatuses() {
+    return {
+        path: `/v1/screening_statuses/`
+    }
+}
+
 export function fetchSubmissionsByStatuses(statuses, filters) {
     const params = new URLSearchParams
     params.append('page_size', 1000)

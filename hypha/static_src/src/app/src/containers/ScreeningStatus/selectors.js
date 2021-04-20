@@ -25,6 +25,6 @@ export const selectVisibleOptions = createSelector(selectScreeningStatuses,selec
   status.id != screeningInfo.defaultSelectedValue.id).map((option) => { 
     return {
     ...option,
-     selected : screeningInfo.selectedValues.some((value) => value.id == option.id)
+     selected : screeningInfo.selectedValues && screeningInfo.selectedValues.some((value) => value.id == option.id)
   }})
 )

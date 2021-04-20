@@ -1,9 +1,5 @@
 import * as ActionTypes from './constants';
 
-export const initializeAction = (id) => ({
-  type: ActionTypes.INITIALIZE,
-  id
-});
 
 export const showLoadingAction = () => ({
 	type: ActionTypes.SHOW_LOADING,

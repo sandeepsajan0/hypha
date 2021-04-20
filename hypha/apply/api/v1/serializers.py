@@ -4,7 +4,6 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
     show_determination_button,
@@ -163,14 +162,15 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     review = ReviewSummarySerializer(source='*')
     determination = DeterminationSummarySerializer(source='*')
     phase = serializers.CharField()
-    screening = ScreeningStatusSerializer(source='screening_statuses.all', many=True)
+    screening = serializers.SerializerMethodField()
     action_buttons = serializers.SerializerMethodField()
     is_determination_form_attached = serializers.BooleanField(read_only=True)
     is_user_staff = serializers.SerializerMethodField()
+    flags = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'summary', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached', 'is_user_staff')
+        fields = ('id', 'summary', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached', 'is_user_staff', 'screening', 'flags')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -198,6 +198,40 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             for response in data
         ]
         return data
+
+    def get_screening(self, obj):
+        selected_default = {}
+        selected_reasons = []
+
+        for screening in obj.screening_statuses.values()[::1]:
+            if screening['default']:
+                selected_default = screening
+            else:
+                selected_reasons.append(screening)
+
+        screening = [
+            {
+                "selected_reasons": selected_reasons
+            },
+            {
+                "selected_default": selected_default
+            }
+        ]
+        return screening
+
+    def get_flags(self, obj):
+        flags = [
+            {
+                "type": 'user',
+                "selected": obj.flagged_by(self.context['request'].user)
+            },
+            {
+                "type": 'staff',
+                "selected": obj.flagged_staff
+            }
+        ]
+
+        return flags
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)

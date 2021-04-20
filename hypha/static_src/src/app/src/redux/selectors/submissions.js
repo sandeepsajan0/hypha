@@ -33,7 +33,10 @@ const getSubmissionFilters = state => SelectSelectedFilters(state)
 
 const getSummaryEditorStatus = state => state.submissions.isSummaryEditorOpened;
 
-const getGroupedIconStatus = state => state.submissions.showGroupedIcon
+const getGroupedIconStatus = state => state.submissions.showGroupedIcon;
+
+const getScreeningStatuses = state => state.submissions.screeningStatuses;
+
 
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
@@ -96,4 +99,5 @@ export {
     getSubmissionFilters,
     getSummaryEditorStatus,
     getGroupedIconStatus,
+    getScreeningStatuses
 };

@@ -744,6 +744,6 @@ describe("Test actions", () => {
           }
         }
         const action = actions.loadCurrentSubmission(['questions'], { bypassCache: true })(firstFunc, secFunc)
-        expect(results.length).toEqual(3);
+        expect(results.length).toEqual(4);
       });
 });

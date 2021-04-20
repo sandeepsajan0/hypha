@@ -22,7 +22,8 @@ import {
     CLEAR_DETERMINATION_DRAFT,
     CLEAR_ALL_SUBMISSIONS,
     UPDATE_SUMMARY_EDITOR,
-    SHOW_GROUPED_ICON
+    SHOW_GROUPED_ICON,
+    FETCH_SCREENING_STATUSES
 } from '@actions/submissions';
 
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -220,6 +221,15 @@ function showGroupedIcon(state= false, action){
     }
 }
 
+function screeningStatuses(state=[], action){
+    switch(action.type){
+        case FETCH_SCREENING_STATUSES:
+            return action.data
+        default:
+            return state
+    }
+}
+
 
 
 const submissions = combineReducers({
@@ -231,7 +241,8 @@ const submissions = combineReducers({
     showDeterminationForm: toggleDeterminationForm,
     currentDetermination,
     isDeterminationDraftExist,
-    showGroupedIcon
+    showGroupedIcon,
+    screeningStatuses
 });
 
 export default submissions;

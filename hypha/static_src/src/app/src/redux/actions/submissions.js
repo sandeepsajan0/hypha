@@ -75,6 +75,8 @@ export const CLEAR_CURRENT_DETERMINATION = 'CLEAR_CURRENT_DETERMINATION';
 export const FETCH_DETERMINATION_DRAFT = 'FETCH_DETERMINATION_DRAFT';
 export const CLEAR_DETERMINATION_DRAFT = 'CLEAR_DETERMINATION_DRAFT';
 
+export const FETCH_SCREENING_STATUSES = 'FETCH_SCREENING_STATUSES'
+
 export const UPDATE_SUMMARY_EDITOR = 'UPDATE_SUMMARY_EDITOR';
 export const SHOW_GROUPED_ICON = 'SHOW_GROUPED_ICON'
 
@@ -98,6 +100,13 @@ export const fetchDeterminationDraft = (submissionID) => ({
         endpoint: api.fetchDeterminationDraft(submissionID),
     },
     submissionID,
+})
+
+export const fetchScreeningStatuses = () => ({
+    [CALL_API]: {
+        types: [ START_LOADING_SUBMISSION, FETCH_SCREENING_STATUSES, FAIL_LOADING_SUBMISSION],
+        endpoint: api.fetchScreeningStatuses(),
+    },
 })
 
 export const clearDeterminationDraftAction = () => ({
@@ -380,6 +389,7 @@ export const loadCurrentSubmission = (requiredFields=[], { bypassCache = false }
     }
     dispatch(fetchSubmission(submissionID))
     dispatch(fetchReviewDraft(submissionID))
+    dispatch(fetchScreeningStatuses())
     return dispatch(fetchDeterminationDraft(submissionID))
 }
 

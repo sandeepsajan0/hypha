@@ -3,15 +3,6 @@ import * as ActionTypes from "../constants";
 import Reducer from "../reducer";
 
 describe("Test actions of screening status", () => {
-  it("should return the intialize action type", () => {
-    const id = 1
-    const expectedResult = {
-      type: ActionTypes.INITIALIZE,
-      id ,
-    };
-    const action = actions.initializeAction(id);
-    expect(action).toEqual(expectedResult);
-  });
   it("should return the screening statuses success action type", () => {
     const data = Reducer(undefined, {}).screeningStatuses
     const expectedResult = {
