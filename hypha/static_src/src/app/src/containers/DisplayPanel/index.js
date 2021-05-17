@@ -11,7 +11,8 @@ import {
     getReviewButtonStatus,
     getCurrentReview,
     getDeterminationButtonStatus,
-    getCurrentDetermination
+    getCurrentDetermination,
+    getSubmissionMetaTerms
 } from '@selectors/submissions'
 import { getDraftNoteForSubmission } from '@selectors/notes';
 
@@ -29,13 +30,15 @@ import Determination from '../Determination';
 import DeterminationFormContainer from '@containers/DeterminationForm'
 import FlagContainer from '@containers/FlagContainer'
 import ResizablePanels from '@components/ResizablePanels'
+import SubmissionMetaTerms from '@components/SubmissionMetaTerms'
+import MetaTerm from '@containers/MetaTerm'
 
 import ScreeningStatusContainer from '@containers/ScreeningStatus';
 import './style.scss'
 
 
 const DisplayPanel = props => {
-    const { submissionID, submission, addMessage, showReviewForm, currentReview, showDeterminationForm, currentDetermination} = props
+    const { submissionID, submission, addMessage, showReviewForm, currentReview, showDeterminationForm, currentDetermination, metaTerms} = props
     const [ currentStatus, setCurrentStatus ] = useState(undefined)
     const [ localSubmissionID, setLocalSubmissionID ] = useState(submissionID)
     const UserFlagContainer = WithFlagType(FlagContainer, 'user', submissionID)
@@ -78,7 +81,9 @@ const DisplayPanel = props => {
             <Determination submissionID={submissionID} submission={submission}/> : null}
             {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
+            <MetaTerm submissionID={submissionID}/>
             <ScreeningStatusContainer submissionID={submissionID} />
+            <SubmissionMetaTerms metaTerms={metaTerms}/>
             <UserFlagContainer />
             <StaffFlagContainer />
             <ReviewInformation submissionID={submissionID} />
@@ -150,6 +155,7 @@ const mapStateToProps = (state, ownProps) => ({
     currentReview: getCurrentReview(state),
     currentDetermination: getCurrentDetermination(state),
     draftNote: getDraftNoteForSubmission(getCurrentSubmissionID(state))(state),
+    metaTerms: getSubmissionMetaTerms(state)
 })
 
 const mapDispatchToProps = {

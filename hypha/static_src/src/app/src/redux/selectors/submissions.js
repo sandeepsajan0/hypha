@@ -45,7 +45,6 @@ const getCurrentRoundSubmissions = createSelector(
     }
 );
 
-
 const getCurrentStatusesSubmissions = createSelector(
     [ getSubmissionIDsForCurrentStatuses, getSubmissions],
     (submissionIDs, submissions) => {
@@ -62,6 +61,29 @@ const getCurrentSubmission = createSelector(
         return submissions[id];
     }
 );
+
+const getSubmissionMetaTerms = createSelector(
+    [getCurrentSubmission], submission => {
+        if(submission && "metaTerms" in submission){
+            let metaTerms = []
+            submission.metaTerms.map(metaTerm => {
+                if(metaTerms.find(mt => mt.parentId == metaTerm.parentId)){
+                    const index = metaTerms.indexOf(metaTerms.find(mt => mt.parentId == metaTerm.parentId))
+                    metaTerms[index].children.push({'id': metaTerm.id, 'name': metaTerm.name})
+                }
+                else {
+                    metaTerms.push({
+                        parentId : metaTerm.parentId,
+                        parent: metaTerm.parent,
+                        children: [{'id': metaTerm.id, 'name': metaTerm.name}]
+                    })
+                }
+            })
+            return metaTerms
+        }
+        return []
+    }
+)
 
 const getSubmissionOfID = (submissionID) => createSelector(
     [getSubmissions], submissions => submissions[submissionID]
@@ -96,4 +118,5 @@ export {
     getSubmissionFilters,
     getSummaryEditorStatus,
     getGroupedIconStatus,
+    getSubmissionMetaTerms
 };
